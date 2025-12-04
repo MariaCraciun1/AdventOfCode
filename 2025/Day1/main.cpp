@@ -24,9 +24,6 @@ int main() {
 
         try{
             int value = std::stoi(line.substr(1));
-            if(value > 100){
-                value = value%100;
-            }
             moves.emplace_back(direction, value);
         }
         catch (...) {
@@ -36,29 +33,30 @@ int main() {
 
     int position = 50;
     for(const auto&move: moves){
+        auto steps = move.getValue();    
         switch (move.getDirection())
         {
         case 'L':
-            if(position - move.getValue() < 0){
-                position = 100 - abs(move.getValue()-position);
+            if(position > 0){
+                if(steps >= position){
+                    zeroCounter += 1 + (steps-position) / 100;
+                }
             } else {
-                position = position - move.getValue();
+                zeroCounter += steps / 100;
+            }
+            position = (position - steps) % 100;
+            if(position < 0){
+                position += 100;
             }
             break;
         case 'R':   
-                if(position + move.getValue() >= 100){
-                    position = abs(100 - (position + move.getValue()));
-                } else {
-                    position = position + move.getValue();
-                }
+            zeroCounter += (position + steps) / 100;
+            position = (position + steps) % 100;
             break;
         default:
             break;
         }
-        if(position ==0){
-            zeroCounter++;
-        }
-    }
+    } 
 
-    std::cout <<  zeroCounter;
+    std::cout << "\nzero counter: " << zeroCounter;
 }
